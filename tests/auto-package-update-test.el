@@ -1,5 +1,7 @@
 (require 'auto-package-update)
 
+(apu-write-current-day)
+
 (ert-deftest test-should-not-update-if-today-it-was-updated ()
   (defun apu-read-last-update-day ()
     (apu-today-day))
