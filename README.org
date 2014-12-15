@@ -36,7 +36,7 @@
 *** Customization
 
     The periodicity (in days) of the update is given by the custom variable
-    =apu-package-update-interval=.
+    =apu-package-update-interval=. If you want to change it, all you need is:
 
     #+begin_src elisp
 (setq apu-package-update-interval 14)
