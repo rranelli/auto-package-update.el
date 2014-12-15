@@ -91,7 +91,7 @@
 
 (defun apu-read-last-update-day ()
   "Read last update day."
-  (string-to-int
+  (string-to-number
    (apu--read-file-as-string apu-last-update-day-path)))
 
 ;;
