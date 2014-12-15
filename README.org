@@ -1,0 +1,42 @@
+#+AUTHOR: Renan Ranelli
+
+[[https://travis-ci.org/rranelli/auto-package-update.el.svg]]
+
+* Automatic package updates
+
+  This script provides functionality for automatically updating your Emacs
+  packages periodically. It is specially usefull for people that work in
+  multiple machines and tend to forget to manually update packages from time to
+  time.
+
+  The main idea is that you set a desired periodicity for the updates, and when
+  you start Emacs, the packages will be automatically updated if enough days
+  have passed since the last update.
+
+*** Installation
+    You can install via `MELPA=, or manually by downloading =auto-package-update.el= and
+    adding the following to your init file:
+
+    ```lisp
+    (add-to-list 'load-path "/path/to/auto-package-update")
+    (require 'auto-package-update)
+    ```
+*** Usage
+
+    If =auto-package-update.el= is installed properly, you can add the following
+    line to your =.emacs=.
+
+    #+begin_src elisp
+(apu-update-packages-if-needed)
+    #+end_src
+
+    This will update your installed packages if there is an update pending
+
+*** Customization
+
+    The periodicity (in days) of the update is given by the custom variable
+    =apu-package-update-interval=.
+
+    #+begin_src elisp
+(setq apu-package-update-interval 14)
+    #+end_src
