@@ -115,15 +115,15 @@
     (package-list-packages)
     (package-menu-mark-upgrades)
     (package-menu-execute t)
-    (kill-buffer)))
+    (kill-buffer))
+  (apu--write-current-day)
+  (message "[PACKAGES UPDATED]"))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
   "Update installed Emacs packages if needed."
   (when (apu--should-update-packages-p)
-    (auto-package-update-now)
-    (apu--write-current-day)
-    (message "[PACKAGES UPDATED]")))
+    (auto-package-update-now)))
 
 (provide 'auto-package-update)
 ;;; auto-package-update.el ends here
