@@ -5,7 +5,7 @@
 * Automatic package updates
 
   This package provides functionality for automatically updating your Emacs
-  packages periodically. It is specially usefull for people that work in
+  packages periodically. It is specially useful for people that work in
   multiple machines and tend to forget to manually update packages from time to
   time.
 
