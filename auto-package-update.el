@@ -31,7 +31,7 @@
 ;; packages periodically. It is specially usefull for people that work in
 ;; multiple machines and tend to forget to manually update packages from time to
 ;; time. The periodicity of the update is given by the custom variable
-;; `apu-package-update-interval'.
+;; `auto-package-update-interval'.
 ;;
 ;;; Change Log:
 ;;
@@ -44,18 +44,18 @@
 ;;
 ;;; Customization
 ;;
-(defcustom apu-package-update-interval
+(defcustom auto-package-update-interval
   7
   "Interval in DAYS for automatic package update."
   :group 'init-packages
   :type 'int)
 
-(defvar apu-last-update-day-filename
+(defvar apu--last-update-day-filename
   ".last-package-update-day"
   "Name of the file in which the last update day is going to be stored.")
 
-(defvar apu-last-update-day-path
-  (expand-file-name apu-last-update-day-filename user-emacs-directory)
+(defvar apu--last-update-day-path
+  (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
 
 ;;
@@ -80,34 +80,34 @@
 ;;
 ;;; Update day read/write functions
 ;;
-(defun apu-today-day ()
+(defun apu--today-day ()
   (time-to-days (current-time)))
 
-(defun apu-write-current-day ()
+(defun apu--write-current-day ()
   "Store current day."
   (apu--write-string-to-file
-   apu-last-update-day-path
-   (int-to-string (apu-today-day))))
+   apu--last-update-day-path
+   (int-to-string (apu--today-day))))
 
-(defun apu-read-last-update-day ()
+(defun apu--read-last-update-day ()
   "Read last update day."
   (string-to-number
-   (apu--read-file-as-string apu-last-update-day-path)))
+   (apu--read-file-as-string apu--last-update-day-path)))
 
 ;;
 ;;; Package update
 ;;
-(defun apu-should-update-packages-p ()
+(defun apu--should-update-packages-p ()
   (or
-   (not (file-exists-p apu-last-update-day-path))
-   (let* ((last-update-day (apu-read-last-update-day))
-	  (days-since (- (apu-today-day) last-update-day)))
+   (not (file-exists-p apu--last-update-day-path))
+   (let* ((last-update-day (apu--read-last-update-day))
+	  (days-since (- (apu--today-day) last-update-day)))
      (>=
-      (/ days-since apu-package-update-interval)
+      (/ days-since auto-package-update-interval)
       1))))
 
 ;;;###autoload
-(defun apu-update-packages ()
+(defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
   (save-excursion
@@ -118,11 +118,11 @@
     (kill-buffer)))
 
 ;;;###autoload
-(defun apu-update-packages-if-needed ()
+(defun auto-package-update-maybe ()
   "Update installed Emacs packages if needed."
-  (when (apu-should-update-packages-p)
-    (apu-update-packages)
-    (apu-write-current-day)
+  (when (apu--should-update-packages-p)
+    (auto-package-update-now)
+    (apu--write-current-day)
     (message "[PACKAGES UPDATED]")))
 
 (provide 'auto-package-update)
