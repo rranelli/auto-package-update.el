@@ -29,7 +29,7 @@
     line to your =.emacs=.
 
     #+begin_src elisp
-(apu-update-packages-if-needed)
+(auto-package-update-maybe)
     #+end_src
 
     This will update your installed packages if there is an update pending
