@@ -1,7 +1,8 @@
 #+AUTHOR: Renan Ranelli
 
-[[https://travis-ci.org/rranelli/auto-package-update.el.svg]]
+[[https://travis-ci.org/rranelli/auto-package-update.el.svg?branch=master]]
 [[http://melpa.org/#/auto-package-update][file:http://melpa.org/packages/auto-package-update-badge.svg]]
+[[http://stable.melpa.org/#/auto-package-update][file:http://stable.melpa.org/packages/auto-package-update-badge.svg]]
 
 * Automatic package updates
 
