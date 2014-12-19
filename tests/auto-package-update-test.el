@@ -16,5 +16,10 @@
     t)
   (should (not (apu--should-update-packages-p))))
 
+(ert-deftest test-it-works ()
+  (should (equal
+	   "[PACKAGES UPDATED]"
+	   (auto-package-update-now))))
+
 (provide 'auto-package-update-test)
 ;;; auto-package-update-test.el ends here
