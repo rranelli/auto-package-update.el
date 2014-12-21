@@ -15,6 +15,10 @@
   you start Emacs, the packages will be automatically updated if enough days
   have passed since the last update.
 
+*** Requirements
+    This package was tested for Emacs 24.4 only. I am currently working to support
+    24.3 too (see #6).
+
 *** Installation
     You can install via =MELPA=, or manually by downloading =auto-package-update.el= and
     adding the following to your init file:

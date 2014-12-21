@@ -6,7 +6,7 @@
 ;; URL: http://github.com/rranelli/auto-package-update.el
 ;; Version: 0.1
 ;; Keywords: package, update
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24.4"))
 
 ;;; License:
 
