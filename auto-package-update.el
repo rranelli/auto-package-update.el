@@ -6,7 +6,7 @@
 ;; URL: http://github.com/rranelli/auto-package-update.el
 ;; Version: 0.1
 ;; Keywords: package, update
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "24.3") (dash "2.1.0"))
 
 ;;; License:
 
@@ -35,10 +35,13 @@
 ;;
 ;;; Change Log:
 ;;
-;; 1.1 - Support GNU Emacs 24.3
-;; 1.0 - First release
+;; 1.2 - Refactor for independency on package-menu functions.
+;; 1.1 - Support GNU Emacs 24.3.
+;; 1.0 - First release.
 
 ;;; Code:
+(require 'dash)
+
 (require 'package)
 (package-initialize)
 
@@ -108,18 +111,49 @@
       (/ days-since auto-package-update-interval)
       1))))
 
+(defun apu--package-up-to-date-p (package)
+  (when (package-installed-p package)
+    (let* ((newest-desc (cadr (assq package package-archive-contents)))
+	   (installed-desc (cadr (or (assq package package-alist)
+				     (assq package package--builtins))))
+	   (newest-version  (package-desc-version newest-desc))
+	   (installed-version (package-desc-version installed-desc)))
+      (version-list-<= newest-version installed-version))))
+
+(defun apu--package-out-of-date-p (package)
+  (not (apu--package-up-to-date-p package)))
+
+(defun apu--packages-to-install ()
+  (-filter 'apu--package-out-of-date-p package-activated-list))
+
+(defun apu--safe-package-install (package)
+  (condition-case ex
+      (progn
+	(package-install package)
+	(add-to-list 'apu--package-installation-results
+		     (format "%s up to date."
+			     (symbol-name package))))
+    ('error (add-to-list 'apu--package-installation-results
+			 (format "Error installing %s"
+				 (symbol-name package))))))
+
+(defun apu--safe-install-packages (packages)
+  (let (apu--package-installation-results)
+    (dolist (package-to-update packages)
+      (apu--safe-package-install package-to-update))
+    apu--package-installation-results))
+
 ;;;###autoload
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
+  (package-refresh-contents)
 
-  (package-list-packages)
-  (dolist (package-to-upgrade (package-menu--find-upgrades))
-    (package-install (car package-to-upgrade)))
-  (kill-buffer)
-
-  (apu--write-current-day)
-  (message "[PACKAGES UPDATED]"))
+  (let ((installation-report (apu--safe-install-packages (apu--packages-to-install))))
+    (apu--write-current-day)
+    (message (mapconcat #'identity
+			(cons "[PACKAGES UPDATED]:" installation-report)
+			"\n"))))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()

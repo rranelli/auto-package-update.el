@@ -16,10 +16,19 @@
     t)
   (should (not (apu--should-update-packages-p))))
 
-(ert-deftest test-it-works ()
+(ert-deftest test-dash-filter-usage ()
   (should (equal
-	   "[PACKAGES UPDATED]"
-	   (auto-package-update-now))))
+	   '(1 2 3)
+	   (-filter #'(lambda (x) (< x 4)) '(1 2 3 4 5)))))
+
+(ert-deftest test-safe-install-wont-raise-error ()
+  (apu--safe-install-packages '(idonotexistasapackageyay)))
+
+(ert-deftest test-it-works ()
+  (add-to-list 'package-archives
+	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+  (auto-package-update-now))
 
 (provide 'auto-package-update-test)
 ;;; auto-package-update-test.el ends here
