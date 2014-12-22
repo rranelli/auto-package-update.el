@@ -112,10 +112,11 @@
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
-  (package-refresh-contents)
 
+  (package-list-packages)
   (dolist (package-to-upgrade (package-menu--find-upgrades))
-    (package-install package-to-upgrade))
+    (package-install (car package-to-upgrade)))
+  (kill-buffer)
 
   (apu--write-current-day)
   (message "[PACKAGES UPDATED]"))
