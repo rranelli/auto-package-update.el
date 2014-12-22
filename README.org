@@ -16,8 +16,8 @@
   have passed since the last update.
 
 *** Requirements
-    This package was tested for Emacs 24.4 only. I am currently working to support
-    24.3 too (see #6).
+    This package was tested for GNU Emacs 24.3 and above. Older Emacsen are not
+    supported yet.
 
 *** Installation
     You can install via =MELPA=, or manually by downloading =auto-package-update.el= and

@@ -6,7 +6,7 @@
 ;; URL: http://github.com/rranelli/auto-package-update.el
 ;; Version: 0.1
 ;; Keywords: package, update
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "24.3"))
 
 ;;; License:
 
@@ -35,10 +35,12 @@
 ;;
 ;;; Change Log:
 ;;
-;; 0.1 - First release
+;; 1.1 - Support GNU Emacs 24.3
+;; 1.0 - First release
 
 ;;; Code:
 (require 'package)
+(package-initialize)
 
 
 ;;
@@ -110,12 +112,12 @@
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
-  (save-excursion
-    (package-refresh-contents)
-    (package-list-packages)
-    (package-menu-mark-upgrades)
-    (package-menu-execute t)
-    (kill-buffer))
+
+  (package-list-packages)
+  (dolist (package-to-upgrade (package-menu--find-upgrades))
+    (package-install (car package-to-upgrade)))
+  (kill-buffer)
+
   (apu--write-current-day)
   (message "[PACKAGES UPDATED]"))
 
