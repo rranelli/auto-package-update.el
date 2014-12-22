@@ -129,7 +129,7 @@
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
-	(package-install package)
+	(package-install-from-archive (cadr (assoc package package-archive-contents)))
 	(add-to-list 'apu--package-installation-results
 		     (format "%s up to date."
 			     (symbol-name package))))
