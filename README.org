@@ -37,7 +37,10 @@
 (auto-package-update-maybe)
     #+end_src
 
-    This will update your installed packages if there is an update pending
+    This will update your installed packages if there is an update pending.
+
+    You can also use the function =auto-package-update-now= to update your packages
+    at any given time.
 
 *** Customization
 
