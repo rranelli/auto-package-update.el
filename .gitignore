@@ -33,5 +33,5 @@ tramp
 
 # make things
 dash.el
-.downloads
+make-readme-markdown.el
 *.tar.bz2
