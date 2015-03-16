@@ -156,7 +156,8 @@
       1))))
 
 (defun apu--package-up-to-date-p (package)
-  (when (package-installed-p package)
+  (when (and (package-installed-p package)
+	     (cadr (assq package package-archive-contents)))
     (let* ((newest-desc (cadr (assq package package-archive-contents)))
 	   (installed-desc (cadr (or (assq package package-alist)
 				     (assq package package--builtins))))
