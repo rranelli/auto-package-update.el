@@ -79,7 +79,9 @@
 
 ;;; Changelog:
 
-;; 1.2 - Refactor for independency on package-menu functions. <br/>
+;; 1.3 - Do not break if a package is not available in the repositories.
+;;       Show update results in a temporary buffer instead of the echo area<br/>
+;; 1.2 - Refactor for independence on package-menu functions. <br/>
 ;; 1.1 - Support GNU Emacs 24.3. <br/>
 ;; 1.0 - First release. <br/>
 
