@@ -106,6 +106,10 @@
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
+
+(defcustom auto-package-update-buffer-name
+  "*package update results*"
+  "Name of the buffer that shows updated packages and error after execution.")
 
 ;;
 ;;; File read/write helpers
@@ -188,6 +192,19 @@
       (apu--safe-package-install package-to-update))
     apu--package-installation-results))
 
+(defun apu--show-results-buffer (contents)
+  (let ((inhibit-read-only t))
+    (pop-to-buffer auto-package-update-buffer-name)
+    (erase-buffer)
+    (insert contents)
+    (toggle-read-only 1)
+    (auto-package-update-minor-mode 1)))
+
+(define-minor-mode auto-package-update-minor-mode
+  "Minor mode for displaying package update results."
+  :group 'auto-package-update
+  :keymap '(("q" . quit-window)))
+
 ;;;###autoload
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
@@ -196,9 +213,9 @@
 
   (let ((installation-report (apu--safe-install-packages (apu--packages-to-install))))
     (apu--write-current-day)
-    (message (mapconcat #'identity
-			(cons "[PACKAGES UPDATED]:" installation-report)
-			"\n"))))
+    (apu--show-results-buffer (mapconcat #'identity
+                                   (cons "[PACKAGES UPDATED]:" installation-report)
+                                   "\n"))))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
