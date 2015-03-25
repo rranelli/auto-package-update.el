@@ -69,8 +69,9 @@
 
 ;;; Customization:
 ;;
-;; The periodicity (in days) of the update is given by the custom variable
-;; `auto-package-update-interval`. If you want to change it, all you need is:
+;; The periodicity (in days) of the update is given by the custom
+;; variable `auto-package-update-interval`. The default interval is 7
+;; days but if you want to change it, all you need is:
 ;;
 ;; ```elisp
 ;; (setq auto-package-update-interval 14)
