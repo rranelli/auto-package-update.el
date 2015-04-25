@@ -6,7 +6,7 @@
 ;; URL: http://github.com/rranelli/auto-package-update.el
 ;; Version: 1.2
 ;; Keywords: package, update
-;; Package-Requires: ((emacs "24.3") (dash "2.1.0"))
+;; Package-Requires: ((emacs "24.4") (dash "2.1.0"))
 
 ;; This file is NOT part of GNU Emacs.
 ;;
@@ -40,7 +40,7 @@
 
 ;;; Requirements:
 ;;
-;; This package was tested for GNU Emacs 24.3 and above. Older Emacsen are not
+;; This package was tested for GNU Emacs 24.4 and above. Older Emacsen are not
 ;; supported yet.
 
 ;;; Installation:

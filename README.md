@@ -19,7 +19,7 @@ have passed since the last update.
 ### Requirements
 
 
-This package was tested for GNU Emacs 24.3 and above. Older Emacsen are not
+This package was tested for GNU Emacs 24.4 and above. Older Emacsen are not
 supported yet.
 
 ### Installation
@@ -63,7 +63,9 @@ days but if you want to change it, all you need is:
 ### Changelog
 
 
-1.2 - Refactor for independency on package-menu functions. <br/>
+1.3 - Do not break if a package is not available in the repositories.
+      Show update results in a temporary buffer instead of the echo area<br/>
+1.2 - Refactor for independence on package-menu functions. <br/>
 1.1 - Support GNU Emacs 24.3. <br/>
 1.0 - First release. <br/>
 
