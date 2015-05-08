@@ -154,6 +154,7 @@
 ;;; Package update
 ;;
 (defun apu--should-update-packages-p ()
+  "Return non-nil when an update is due."
   (or
    (not (file-exists-p apu--last-update-day-path))
    (let* ((last-update-day (apu--read-last-update-day))
