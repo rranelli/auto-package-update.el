@@ -102,6 +102,12 @@
   :group 'init-packages
   :type 'int)
 
+(defcustom auto-package-update-before-hook '()
+  "List of functions to be called before running an automatic package update.")
+
+(defcustom auto-package-update-after-hook '()
+  "List of functions to be called after running an automatic package update.")
+
 (defvar apu--last-update-day-filename
   ".last-package-update-day"
   "Name of the file in which the last update day is going to be stored.")
@@ -213,13 +219,17 @@
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
+  (run-hooks 'auto-package-update-before-hook)
+
   (package-refresh-contents)
 
   (let ((installation-report (apu--safe-install-packages (apu--packages-to-install))))
     (apu--write-current-day)
     (apu--show-results-buffer (mapconcat #'identity
-                                   (cons "[PACKAGES UPDATED]:" installation-report)
-                                   "\n"))))
+                                         (cons "[PACKAGES UPDATED]:" installation-report)
+                                         "\n")))
+
+  (run-hooks 'auto-package-update-after-hook))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
