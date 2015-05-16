@@ -76,10 +76,21 @@
 ;; ```elisp
 ;; (setq auto-package-update-interval 14)
 ;; ```
-
+;;
+;;;; Hooks
+;;
+;; If you want to add functions to run *before* and *after* the package update, you can
+;; use the `auto-package-update-before-hook' and `auto-package-update-after-hook' hooks.
+;; For example:
+;;
+;; ```elisp
+;; (add-hook 'auto-package-update-before-hook
+;;           (lambda () (message "I will update packages now")))
+;; ```
 
 ;;; Changelog:
 
+;; 1.4 - Add before and after update hooks. <br/>
 ;; 1.3 - Do not break if a package is not available in the repositories.
 ;;       Show update results in a temporary buffer instead of the echo area<br/>
 ;; 1.2 - Refactor for independence on package-menu functions. <br/>
