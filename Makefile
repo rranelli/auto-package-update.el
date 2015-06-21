@@ -34,7 +34,7 @@ git-hooks: .git/hooks/pre-commit
 
 # Automatically generate README.md
 README.md: $(PACKAGE_FILE) | make-readme-markdown.el
-	$(EMACS) --script make-readme-markdown.el <$(PACKAGE_FILE) >$@ 2>/dev/null
+	$(EMACS) --script make-readme-markdown.el < $< >$@ 2>/dev/null
 
 # Dependencies
 dash.el: DEPENDENCY_URL = https://raw.githubusercontent.com/magnars/dash.el/master/dash.el
