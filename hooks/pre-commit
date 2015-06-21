@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 echo 'Generating README.md ...'
 make README.md
 git add README.md
