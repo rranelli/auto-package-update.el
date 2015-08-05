@@ -43,10 +43,19 @@ line to your `.emacs`.
 (auto-package-update-maybe)
 ```
 
-This will update your installed packages if there is an update pending.
+This will update your installed packages at startup if there is an update
+pending.
 
-You can also use the function `auto-package-update-now` to update your packages
-at any given time.
+You can register a check every day at a given time using `auto-package-update-at-time`:
+
+```elisp
+(auto-package-update-at-time "03:00")
+```
+
+will check for pending updates every three o'clock a.m..
+
+You can also use the function `auto-package-update-now` to update your
+packages immediatelly at any given time.
 
 ### Customization
 
@@ -73,6 +82,7 @@ For example:
 ### Changelog
 
 
+1.5 - Allow user to check for updates every day at specified time. <br/>
 1.4 - Add before and after update hooks. <br/>
 1.3 - Do not break if a package is not available in the repositories.
       Show update results in a temporary buffer instead of the echo area<br/>
@@ -86,6 +96,10 @@ For example:
 #### `(auto-package-update-now)`
 
 Update installed Emacs packages.
+
+#### `(auto-package-update-at-time TIME)`
+
+Try to update every day at the specified TIME.
 
 #### `(auto-package-update-maybe)`
 

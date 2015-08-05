@@ -4,7 +4,7 @@
 
 ;; Author: Renan Ranelli
 ;; URL: http://github.com/rranelli/auto-package-update.el
-;; Version: 1.2
+;; Version: 1.5
 ;; Keywords: package, update
 ;; Package-Requires: ((emacs "24.4") (dash "2.1.0"))
 
@@ -62,10 +62,19 @@
 ;; (auto-package-update-maybe)
 ;; ```
 ;;
-;; This will update your installed packages if there is an update pending.
+;; This will update your installed packages at startup if there is an update
+;; pending.
 ;;
-;; You can also use the function `auto-package-update-now` to update your packages
-;; at any given time.
+;; You can register a check every day at a given time using `auto-package-update-at-time':
+;;
+;; ```elisp
+;; (auto-package-update-at-time "03:00")
+;; ```
+;;
+;; will check for pending updates every three o'clock a.m..
+;;
+;; You can also use the function `auto-package-update-now' to update your
+;; packages immediatelly at any given time.
 
 ;;; Customization:
 ;;
@@ -90,6 +99,7 @@
 
 ;;; Changelog:
 
+;; 1.5 - Allow user to check for updates every day at specified time. <br/>
 ;; 1.4 - Add before and after update hooks. <br/>
 ;; 1.3 - Do not break if a package is not available in the repositories.
 ;;       Show update results in a temporary buffer instead of the echo area<br/>
@@ -241,6 +251,11 @@
                                          "\n")))
 
   (run-hooks 'auto-package-update-after-hook))
+
+;;;###autoload
+(defun auto-package-update-at-time (time)
+  "Try to update every day at the specified TIME."
+  (run-at-time time 86400 'auto-package-update-maybe))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
