@@ -25,10 +25,6 @@
 
 ;;; Commentary:
 ;;
-;; [![Build Status](https://travis-ci.org/rranelli/auto-package-update.el.svg?branch=master)](https://travis-ci.org/rranelli/auto-package-update.el)
-;; [![MELPA](http://melpa.org/packages/auto-package-update-badge.svg)](http://melpa.org/#/auto-package-update)
-;; [![MELPA Stable](http://stable.melpa.org/packages/auto-package-update-badge.svg)](http://stable.melpa.org/#/auto-package-update)
-;;
 ;; This package provides functionality for automatically updating your Emacs
 ;; packages periodically. It is specially useful for people that work in
 ;; multiple machines and tend to forget to manually update packages from time to
