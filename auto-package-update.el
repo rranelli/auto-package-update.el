@@ -126,15 +126,18 @@
 
 (defcustom auto-package-update-before-hook '()
   "List of functions to be called before running an automatic package update."
+  :type 'hook
   :group 'auto-package-update)
 
 (defcustom auto-package-update-after-hook '()
   "List of functions to be called after running an automatic package update."
+  :type 'hook
   :group 'auto-package-update)
 
 (defvar apu--last-update-day-filename
   ".last-package-update-day"
   "Name of the file in which the last update day is going to be stored."
+  :type 'string
   :group 'auto-package-update)
 
 (defvar apu--last-update-day-path
@@ -144,6 +147,7 @@
 (defcustom auto-package-update-buffer-name
   "*package update results*"
   "Name of the buffer that shows updated packages and error after execution."
+  :type 'string
   :group 'auto-package-update)
 
 ;;
