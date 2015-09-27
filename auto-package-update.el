@@ -117,7 +117,7 @@
   7
   "Interval in DAYS for automatic package update."
   :group 'init-packages
-  :type 'int)
+  :type 'integer)
 
 (defcustom auto-package-update-before-hook '()
   "List of functions to be called before running an automatic package update.")
