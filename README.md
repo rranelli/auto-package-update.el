@@ -2,7 +2,6 @@
 *Automatically update Emacs packages.*
 
 ---
-
 [![Build Status](https://travis-ci.org/rranelli/auto-package-update.el.svg?branch=master)](https://travis-ci.org/rranelli/auto-package-update.el)
 [![MELPA](http://melpa.org/packages/auto-package-update-badge.svg)](http://melpa.org/#/auto-package-update)
 [![MELPA Stable](http://stable.melpa.org/packages/auto-package-update-badge.svg)](http://stable.melpa.org/#/auto-package-update)
