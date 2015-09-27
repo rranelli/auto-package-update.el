@@ -113,21 +113,29 @@
 ;;
 ;;; Customization
 ;;
+
+(defgroup auto-package-update nil
+  "Automatically update Emacs packages."
+  :group 'package)
+
 (defcustom auto-package-update-interval
   7
   "Interval in DAYS for automatic package update."
-  :group 'init-packages
+  :group 'auto-package-update
   :type 'integer)
 
 (defcustom auto-package-update-before-hook '()
-  "List of functions to be called before running an automatic package update.")
+  "List of functions to be called before running an automatic package update."
+  :group 'auto-package-update)
 
 (defcustom auto-package-update-after-hook '()
-  "List of functions to be called after running an automatic package update.")
+  "List of functions to be called after running an automatic package update."
+  :group 'auto-package-update)
 
 (defvar apu--last-update-day-filename
   ".last-package-update-day"
-  "Name of the file in which the last update day is going to be stored.")
+  "Name of the file in which the last update day is going to be stored."
+  :group 'auto-package-update)
 
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
@@ -135,7 +143,8 @@
 
 (defcustom auto-package-update-buffer-name
   "*package update results*"
-  "Name of the buffer that shows updated packages and error after execution.")
+  "Name of the buffer that shows updated packages and error after execution."
+  :group 'auto-package-update)
 
 ;;
 ;;; File read/write helpers
