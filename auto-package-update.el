@@ -109,7 +109,6 @@
 (require 'package)
 (package-initialize)
 
-
 ;;
 ;;; Customization
 ;;
@@ -149,7 +148,7 @@
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
-
+
 ;;
 ;;; File read/write helpers
 ;;
@@ -166,9 +165,9 @@
     (insert string)
     (when (file-writable-p file)
       (write-region (point-min)
-		    (point-max)
-		    file))))
-
+                    (point-max)
+                    file))))
+
 ;;
 ;;; Update day read/write functions
 ;;
@@ -185,7 +184,7 @@
   "Read last update day."
   (string-to-number
    (apu--read-file-as-string apu--last-update-day-path)))
-
+
 ;;
 ;;; Package update
 ;;
@@ -194,19 +193,19 @@
   (or
    (not (file-exists-p apu--last-update-day-path))
    (let* ((last-update-day (apu--read-last-update-day))
-	  (days-since (- (apu--today-day) last-update-day)))
+          (days-since (- (apu--today-day) last-update-day)))
      (>=
       (/ days-since auto-package-update-interval)
       1))))
 
 (defun apu--package-up-to-date-p (package)
   (when (and (package-installed-p package)
-	     (cadr (assq package package-archive-contents)))
+             (cadr (assq package package-archive-contents)))
     (let* ((newest-desc (cadr (assq package package-archive-contents)))
-	   (installed-desc (cadr (or (assq package package-alist)
-				     (assq package package--builtins))))
-	   (newest-version  (package-desc-version newest-desc))
-	   (installed-version (package-desc-version installed-desc)))
+           (installed-desc (cadr (or (assq package package-alist)
+                                     (assq package package--builtins))))
+           (newest-version  (package-desc-version newest-desc))
+           (installed-version (package-desc-version installed-desc)))
       (version-list-<= newest-version installed-version))))
 
 (defun apu--package-out-of-date-p (package)
@@ -218,13 +217,11 @@
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
-	(package-install-from-archive (cadr (assoc package package-archive-contents)))
-	(add-to-list 'apu--package-installation-results
-		     (format "%s up to date."
-			     (symbol-name package))))
+        (package-install-from-archive (cadr (assoc package package-archive-contents)))
+        (add-to-list 'apu--package-installation-results
+                     (format "%s up to date." (symbol-name package))))
     ('error (add-to-list 'apu--package-installation-results
-			 (format "Error installing %s"
-				 (symbol-name package))))))
+                         (format "Error installing %s" (symbol-name package))))))
 
 (defun apu--safe-install-packages (packages)
   (let (apu--package-installation-results)
