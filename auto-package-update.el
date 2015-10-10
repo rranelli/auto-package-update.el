@@ -224,9 +224,16 @@
 (defun apu--packages-to-install ()
   (-filter 'apu--package-out-of-date-p package-activated-list))
 
+(defun apu--add-to-old-versions-dirs-list (package)
+  "Add package old version dir to apu--old-versions-dir-list"
+  (let ((desc (cadr (assq package package-alist))))
+    (concat apu--old-versions-dirs-list (package-desc-dir desc))))
+
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
+        (when apu--delete-old-versions
+          (apu--add-to-old-versions-dirs-list package))
         (package-install-from-archive (cadr (assoc package package-archive-contents)))
         (add-to-list 'apu--package-installation-results
                      (format "%s up to date." (symbol-name package))))
