@@ -145,6 +145,12 @@
   :type 'string
   :group 'auto-package-update)
 
+(defcustom apu--delete-old-versions
+  nil
+  "If not nil, delete old versions directories."
+  :type 'boolean
+  :group 'auto-package-update)
+
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
