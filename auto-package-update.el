@@ -229,6 +229,10 @@
   (let ((desc (cadr (assq package package-alist))))
     (concat apu--old-versions-dirs-list (package-desc-dir desc))))
 
+(defun apu--delete-old-versions-dirs-list (dirs)
+  (dolist (old-version-dir-to-delete dirs)
+    (delete-directory old-version-dir-to-delete)))
+
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
@@ -244,6 +248,8 @@
   (let (apu--package-installation-results)
     (dolist (package-to-update packages)
       (apu--safe-package-install package-to-update))
+    (when apu--delete-old-versions
+      (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
 
 (defun apu--show-results-buffer (contents)
