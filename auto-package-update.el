@@ -155,6 +155,10 @@
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
 
+(defvar apu--old-versions-dirs-list
+  ()
+  "List with old versions directories to delete.")
+
 ;;
 ;;; File read/write helpers
 ;;
