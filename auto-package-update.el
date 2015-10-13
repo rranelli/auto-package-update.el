@@ -229,9 +229,9 @@
   (let ((desc (cadr (assq package package-alist))))
     (concat apu--old-versions-dirs-list (package-desc-dir desc))))
 
-(defun apu--delete-old-versions-dirs-list (dirs)
-  (dolist (old-version-dir-to-delete dirs)
-    (delete-directory old-version-dir-to-delete)))
+(defun apu--delete-old-versions-dirs-list ()
+  (dolist (old-version-dir-to-delete apu--old-versions-dirs-list)
+    (delete-directory old-version-dir-to-delete t)))
 
 (defun apu--safe-package-install (package)
   (condition-case ex
