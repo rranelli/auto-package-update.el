@@ -230,8 +230,11 @@
     (add-to-list 'apu--old-versions-dirs-list (package-desc-dir desc))))
 
 (defun apu--delete-old-versions-dirs-list ()
+  "Delete package old version dirs saved in variable apu--old-versions-dirs-list"
   (dolist (old-version-dir-to-delete apu--old-versions-dirs-list)
-    (delete-directory old-version-dir-to-delete t)))
+    (delete-directory old-version-dir-to-delete t))
+  ;; Clear list
+  (setq apu--old-versions-dirs-list ()))
 
 (defun apu--safe-package-install (package)
   (condition-case ex
