@@ -145,7 +145,7 @@
   :type 'string
   :group 'auto-package-update)
 
-(defcustom apu--delete-old-versions
+(defcustom auto-package-update-delete-old-versions
   nil
   "If not nil, delete old versions directories."
   :type 'boolean
@@ -239,7 +239,7 @@
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
-        (when apu--delete-old-versions
+        (when auto-package-update-delete-old-versions
           (apu--add-to-old-versions-dirs-list package))
         (package-install-from-archive (cadr (assoc package package-archive-contents)))
         (add-to-list 'apu--package-installation-results
@@ -251,7 +251,7 @@
   (let (apu--package-installation-results)
     (dolist (package-to-update packages)
       (apu--safe-package-install package-to-update))
-    (when apu--delete-old-versions
+    (when auto-package-update-delete-old-versions
       (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
 
