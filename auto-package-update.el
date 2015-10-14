@@ -225,9 +225,9 @@
   (-filter 'apu--package-out-of-date-p package-activated-list))
 
 (defun apu--add-to-old-versions-dirs-list (package)
-  "Add package old version dir to apu--old-versions-dir-list"
+  "Add package old version dir to apu--old-versions-dirs-list"
   (let ((desc (cadr (assq package package-alist))))
-    (concat apu--old-versions-dirs-list (package-desc-dir desc))))
+    (add-to-list 'apu--old-versions-dirs-list (package-desc-dir desc))))
 
 (defun apu--delete-old-versions-dirs-list ()
   (dolist (old-version-dir-to-delete apu--old-versions-dirs-list)
