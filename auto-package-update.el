@@ -222,7 +222,7 @@
   (not (apu--package-up-to-date-p package)))
 
 (defun apu--packages-to-install ()
-  (-filter 'apu--package-out-of-date-p package-activated-list))
+  (delete-dups (-filter 'apu--package-out-of-date-p package-activated-list)))
 
 (defun apu--add-to-old-versions-dirs-list (package)
   "Add package old version dir to apu--old-versions-dirs-list"
