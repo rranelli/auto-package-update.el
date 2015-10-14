@@ -82,7 +82,15 @@
 ;; (setq auto-package-update-interval 14)
 ;; ```
 ;;
-;;;; Hooks
+;; To delete residual old version directory when updating, set to
+;; true variable `auto-package-update-delete-old-versions`. The
+;; default value is `nil`. If you want to enable deleting:
+;;
+;; ```elisp
+;; (setq auto-package-update-delete-old-versions t)
+;; ```
+;;
+;;; Hooks
 ;;
 ;; If you want to add functions to run *before* and *after* the package update, you can
 ;; use the `auto-package-update-before-hook' and `auto-package-update-after-hook' hooks.
