@@ -82,7 +82,15 @@
 ;; (setq auto-package-update-interval 14)
 ;; ```
 ;;
-;;;; Hooks
+;; To delete residual old version directory when updating, set to
+;; true variable `auto-package-update-delete-old-versions`. The
+;; default value is `nil`. If you want to enable deleting:
+;;
+;; ```elisp
+;; (setq auto-package-update-delete-old-versions t)
+;; ```
+;;
+;;; Hooks
 ;;
 ;; If you want to add functions to run *before* and *after* the package update, you can
 ;; use the `auto-package-update-before-hook' and `auto-package-update-after-hook' hooks.
@@ -109,7 +117,6 @@
 (require 'package)
 (package-initialize)
 
-
 ;;
 ;;; Customization
 ;;
@@ -146,10 +153,20 @@
   :type 'string
   :group 'auto-package-update)
 
+(defcustom auto-package-update-delete-old-versions
+  nil
+  "If not nil, delete old versions directories."
+  :type 'boolean
+  :group 'auto-package-update)
+
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
-
+
+(defvar apu--old-versions-dirs-list
+  ()
+  "List with old versions directories to delete.")
+
 ;;
 ;;; File read/write helpers
 ;;
@@ -166,9 +183,9 @@
     (insert string)
     (when (file-writable-p file)
       (write-region (point-min)
-		    (point-max)
-		    file))))
-
+                    (point-max)
+                    file))))
+
 ;;
 ;;; Update day read/write functions
 ;;
@@ -185,7 +202,7 @@
   "Read last update day."
   (string-to-number
    (apu--read-file-as-string apu--last-update-day-path)))
-
+
 ;;
 ;;; Package update
 ;;
@@ -194,42 +211,56 @@
   (or
    (not (file-exists-p apu--last-update-day-path))
    (let* ((last-update-day (apu--read-last-update-day))
-	  (days-since (- (apu--today-day) last-update-day)))
+          (days-since (- (apu--today-day) last-update-day)))
      (>=
       (/ days-since auto-package-update-interval)
       1))))
 
 (defun apu--package-up-to-date-p (package)
   (when (and (package-installed-p package)
-	     (cadr (assq package package-archive-contents)))
+             (cadr (assq package package-archive-contents)))
     (let* ((newest-desc (cadr (assq package package-archive-contents)))
-	   (installed-desc (cadr (or (assq package package-alist)
-				     (assq package package--builtins))))
-	   (newest-version  (package-desc-version newest-desc))
-	   (installed-version (package-desc-version installed-desc)))
+           (installed-desc (cadr (or (assq package package-alist)
+                                     (assq package package--builtins))))
+           (newest-version  (package-desc-version newest-desc))
+           (installed-version (package-desc-version installed-desc)))
       (version-list-<= newest-version installed-version))))
 
 (defun apu--package-out-of-date-p (package)
   (not (apu--package-up-to-date-p package)))
 
 (defun apu--packages-to-install ()
-  (-filter 'apu--package-out-of-date-p package-activated-list))
+  (delete-dups (-filter 'apu--package-out-of-date-p package-activated-list)))
+
+(defun apu--add-to-old-versions-dirs-list (package)
+  "Add package old version dir to apu--old-versions-dirs-list"
+  (let ((desc (cadr (assq package package-alist))))
+    (add-to-list 'apu--old-versions-dirs-list (package-desc-dir desc))))
+
+(defun apu--delete-old-versions-dirs-list ()
+  "Delete package old version dirs saved in variable apu--old-versions-dirs-list"
+  (dolist (old-version-dir-to-delete apu--old-versions-dirs-list)
+    (delete-directory old-version-dir-to-delete t))
+  ;; Clear list
+  (setq apu--old-versions-dirs-list ()))
 
 (defun apu--safe-package-install (package)
   (condition-case ex
       (progn
-	(package-install-from-archive (cadr (assoc package package-archive-contents)))
-	(add-to-list 'apu--package-installation-results
-		     (format "%s up to date."
-			     (symbol-name package))))
+        (when auto-package-update-delete-old-versions
+          (apu--add-to-old-versions-dirs-list package))
+        (package-install-from-archive (cadr (assoc package package-archive-contents)))
+        (add-to-list 'apu--package-installation-results
+                     (format "%s up to date." (symbol-name package))))
     ('error (add-to-list 'apu--package-installation-results
-			 (format "Error installing %s"
-				 (symbol-name package))))))
+                         (format "Error installing %s" (symbol-name package))))))
 
 (defun apu--safe-install-packages (packages)
   (let (apu--package-installation-results)
     (dolist (package-to-update packages)
       (apu--safe-package-install package-to-update))
+    (when auto-package-update-delete-old-versions
+      (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
 
 (defun apu--show-results-buffer (contents)
