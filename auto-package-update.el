@@ -102,8 +102,8 @@
 ;; ```
 
 ;;; Changelog:
-
-;; 1.6 - Add option to remove old packages from `.emacs.d/elpa` when updating. Thanks to JesusMtnez. <br/>
+;; 1.6.1 - Replace deprecated `toggle-read-only' with `read-only-mode' to remove byte compile warnings. Thanx to @syohex. <br/>
+;; 1.6 - Add option to remove old packages from `.emacs.d/elpa' when updating. Thanks to @JesusMtnez. <br/>
 ;; 1.5 - Allow user to check for updates every day at specified time. <br/>
 ;; 1.4 - Add before and after update hooks. <br/>
 ;; 1.3 - Do not break if a package is not available in the repositories.
