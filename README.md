@@ -67,7 +67,7 @@ days but if you want to change it, all you need is:
 (setq auto-package-update-interval 14)
 ```
 
-To delete old version directory when updating, set to
+To delete residual old version directory when updating, set to
 true variable `auto-package-update-delete-old-versions`. The
 default value is `nil`. If you want to enable deleting:
 
@@ -90,6 +90,7 @@ For example:
 ### Changelog
 
 
+1.6 - Add option to remove old packages from `.emacs.d/elpa` when updating. Thanks to JesusMtnez. <br/>
 1.5 - Allow user to check for updates every day at specified time. <br/>
 1.4 - Add before and after update hooks. <br/>
 1.3 - Do not break if a package is not available in the repositories.
