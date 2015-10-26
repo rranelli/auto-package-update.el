@@ -269,7 +269,7 @@
     (pop-to-buffer auto-package-update-buffer-name)
     (erase-buffer)
     (insert contents)
-    (toggle-read-only 1)
+    (read-only-mode 1)
     (auto-package-update-minor-mode 1)))
 
 (define-minor-mode auto-package-update-minor-mode
