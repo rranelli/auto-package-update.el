@@ -4,7 +4,7 @@
 
 ;; Author: Renan Ranelli
 ;; URL: http://github.com/rranelli/auto-package-update.el
-;; Version: 1.5
+;; Version: 1.6
 ;; Keywords: package, update
 ;; Package-Requires: ((emacs "24.4") (dash "2.1.0"))
 
@@ -103,6 +103,7 @@
 
 ;;; Changelog:
 
+;; 1.6 - Add option to remove old packages from `.emacs.d/elpa` when updating. Thanks to JesusMtnez. <br/>
 ;; 1.5 - Allow user to check for updates every day at specified time. <br/>
 ;; 1.4 - Add before and after update hooks. <br/>
 ;; 1.3 - Do not break if a package is not available in the repositories.
