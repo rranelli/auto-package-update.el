@@ -67,6 +67,14 @@ days but if you want to change it, all you need is:
 (setq auto-package-update-interval 14)
 ```
 
+Sometimes it is useful to skip an automatic update, e.g. when you're in a hurry
+or don't have a working internet connection.
+Use this setting to show a manual prompt before automatic updates:
+
+```elisp
+(setq auto-package-update-prompt-before-update t)
+```
+
 To delete residual old version directory when updating, set to
 true variable `auto-package-update-delete-old-versions`. The
 default value is `nil`. If you want to enable deleting:
@@ -89,6 +97,7 @@ For example:
 
 ### Changelog
 
+1.7 - Add option to prompt user before running auto-package-update-maybe <br/>
 1.6.1 - Replace deprecated `toggle-read-only` with `read-only-mode` to remove byte compile warnings. Thanx to @syohex. <br/>
 1.6 - Add option to remove old packages from `.emacs.d/elpa` when updating. Thanks to @JesusMtnez. <br/>
 1.5 - Allow user to check for updates every day at specified time. <br/>
