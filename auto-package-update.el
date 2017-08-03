@@ -4,7 +4,7 @@
 
 ;; Author: Renan Ranelli
 ;; URL: http://github.com/rranelli/auto-package-update.el
-;; Version: 1.6
+;; Version: 1.7
 ;; Keywords: package, update
 ;; Package-Requires: ((emacs "24.4") (dash "2.1.0"))
 
@@ -82,6 +82,14 @@
 ;; (setq auto-package-update-interval 14)
 ;; ```
 ;;
+;; Sometimes it is useful to skip an automatic update, e.g. when you're in a hurry
+;; or don't have a working internet connection.
+;; Use this setting to show a manual prompt before automatic updates:
+;;
+;; ```elisp
+;; (setq auto-package-update-prompt-before-update t)
+;; ```
+;;
 ;; To delete residual old version directory when updating, set to
 ;; true variable `auto-package-update-delete-old-versions`. The
 ;; default value is `nil`. If you want to enable deleting:
@@ -102,6 +110,7 @@
 ;; ```
 
 ;;; Changelog:
+;; 1.7 - Add option to prompt user before running auto-package-update-maybe <br/>
 ;; 1.6.1 - Replace deprecated `toggle-read-only' with `read-only-mode' to remove byte compile warnings. Thanx to @syohex. <br/>
 ;; 1.6 - Add option to remove old packages from `.emacs.d/elpa' when updating. Thanks to @JesusMtnez. <br/>
 ;; 1.5 - Allow user to check for updates every day at specified time. <br/>
@@ -160,6 +169,12 @@
   :type 'boolean
   :group 'auto-package-update)
 
+(defcustom auto-package-update-prompt-before-update
+  nil
+  "Prompt user (y/n) before running auto-package-update-maybe"
+  :type 'boolean
+  :group 'auto-package-update)
+
 (defvar apu--last-update-day-path
   (expand-file-name apu--last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
@@ -209,13 +224,21 @@
 ;;
 (defun apu--should-update-packages-p ()
   "Return non-nil when an update is due."
-  (or
-   (not (file-exists-p apu--last-update-day-path))
-   (let* ((last-update-day (apu--read-last-update-day))
-          (days-since (- (apu--today-day) last-update-day)))
-     (>=
-      (/ days-since auto-package-update-interval)
-      1))))
+  (and
+   (or
+    (not (file-exists-p apu--last-update-day-path))
+    (let* ((last-update-day (apu--read-last-update-day))
+	   (days-since (- (apu--today-day) last-update-day)))
+      (>=
+       (/ days-since auto-package-update-interval)
+       1)))
+   (apu--get-permission-to-update-p)))
+
+(defun apu--get-permission-to-update-p ()
+  "(Optionally) Prompt permission to perform update"
+  (if auto-package-update-prompt-before-update
+      (y-or-n-p "Auto-update packages now?")
+    t))
 
 (defun apu--package-up-to-date-p (package)
   (when (and (package-installed-p package)
