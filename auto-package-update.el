@@ -151,7 +151,7 @@
   :type 'hook
   :group 'auto-package-update)
 
-(defcustom apu--last-update-day-filename
+(defcustom apu-last-update-day-filename
   ".last-package-update-day"
   "Name of the file in which the last update day is going to be stored."
   :type 'string
@@ -176,7 +176,7 @@
   :group 'auto-package-update)
 
 (defvar apu--last-update-day-path
-  (expand-file-name apu--last-update-day-filename user-emacs-directory)
+  (expand-file-name apu-last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
 
 (defvar apu--old-versions-dirs-list
