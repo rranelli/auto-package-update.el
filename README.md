@@ -83,6 +83,14 @@ default value is `nil`. If you want to enable deleting:
 (setq auto-package-update-delete-old-versions t)
 ```
 
+By default the results buffer will be shown after auto package update is complete.
+Set to true for variable `auto-package-update-hide-results` to hide the results buffer
+after auto package update is complete:
+
+```elisp
+(setq auto-package-update-hide-results t)
+```
+
 ### Hooks
 
 
