@@ -125,7 +125,8 @@
 (require 'dash)
 
 (require 'package)
-(package-initialize)
+(unless package--initialized
+  (package-initialize))
 
 ;;
 ;;; Customization
