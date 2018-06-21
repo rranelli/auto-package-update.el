@@ -152,7 +152,7 @@
   :type 'hook
   :group 'auto-package-update)
 
-(defcustom apu-last-update-day-filename
+(defcustom auto-package-update-last-update-day-filename
   ".last-package-update-day"
   "Name of the file in which the last update day is going to be stored."
   :type 'string
@@ -183,8 +183,8 @@
   :type 'boolean
   :group 'auto-package-update)
 
-(defvar apu--last-update-day-path
-  (expand-file-name apu-last-update-day-filename user-emacs-directory)
+(defvar auto-package-update-last-update-day-path
+  (expand-file-name auto-package-update-last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
 
 (defvar apu--old-versions-dirs-list
@@ -219,13 +219,13 @@
 (defun apu--write-current-day ()
   "Store current day."
   (apu--write-string-to-file
-   apu--last-update-day-path
+   auto-package-update-last-update-day-path
    (int-to-string (apu--today-day))))
 
 (defun apu--read-last-update-day ()
   "Read last update day."
   (string-to-number
-   (apu--read-file-as-string apu--last-update-day-path)))
+   (apu--read-file-as-string auto-package-update-last-update-day-path)))
 
 ;;
 ;;; Package update
@@ -234,7 +234,7 @@
   "Return non-nil when an update is due."
   (and
    (or
-    (not (file-exists-p apu--last-update-day-path))
+    (not (file-exists-p auto-package-update-last-update-day-path))
     (let* ((last-update-day (apu--read-last-update-day))
            (days-since (- (apu--today-day) last-update-day)))
       (>=
