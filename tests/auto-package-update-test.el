@@ -1,7 +1,7 @@
 (require 'auto-package-update)
 
 (ert-deftest test-should-update-if-there-is-no-record-file ()
-  (setq apu-last-update-day-path "/I/be/no/file")
+  (setq auto-package-update-last-update-day-path "/I/be/no/file")
   (should (apu--should-update-packages-p)))
 
 (ert-deftest test-dash-filter-usage ()
