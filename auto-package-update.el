@@ -313,6 +313,17 @@
   :group 'auto-package-update
   :keymap '(("q" . quit-window)))
 
+(defun apu--filter-quelpa-packages (package-list)
+  "Return PACKAGE-LIST without quelpa packages."
+  (if (fboundp 'quelpa)
+      (let ((filtered-package-list package-list))
+        (dolist (package quelpa-cache)
+          (let ((package-name (car package)))
+            (setq filtered-package-list
+                  (delq package-name filtered-package-list))))
+        filtered-package-list))
+    package-list)
+
 ;;;###autoload
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
@@ -321,7 +332,8 @@
 
   (package-refresh-contents)
 
-  (let ((installation-report (apu--safe-install-packages (apu--packages-to-install))))
+  (let* ((package-list (apu--filter-quelpa-packages (apu--packages-to-install)))
+         (installation-report (apu--safe-install-packages package-list)))
     (apu--write-current-day)
     (apu--write-results-buffer
      (mapconcat #'identity
