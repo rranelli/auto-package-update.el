@@ -16,7 +16,7 @@
   (defun apu--packages-to-install ()
     '(2048-game))
   (add-to-list 'package-archives
-	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
+	       '("melpa" . "https://melpa.org/packages/") t)
   (auto-package-update-now))
 
 (ert-deftest test-should-update ()

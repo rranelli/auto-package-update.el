@@ -317,12 +317,13 @@
   "Return PACKAGE-LIST without quelpa packages."
   (if (fboundp 'quelpa)
       (let ((filtered-package-list package-list))
+        (quelpa-read-cache)
         (dolist (package quelpa-cache)
           (let ((package-name (car package)))
             (setq filtered-package-list
                   (delq package-name filtered-package-list))))
-        filtered-package-list))
-    package-list)
+        filtered-package-list)
+    package-list))
 
 ;;;###autoload
 (defun auto-package-update-now ()
