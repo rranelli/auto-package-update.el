@@ -281,7 +281,10 @@
       (progn
         (when auto-package-update-delete-old-versions
           (apu--add-to-old-versions-dirs-list package))
-        (package-install-from-archive (cadr (assoc package package-archive-contents)))
+        (let* ((pkg-desc (cadr (assoc package package-archive-contents)))
+               (transaction (package-compute-transaction (list pkg-desc)
+                                                         (package-desc-reqs pkg-desc))))
+          (package-download-transaction transaction))
         (add-to-list 'apu--package-installation-results
                      (format "%s up to date." (symbol-name package))))
     ('error (add-to-list 'apu--package-installation-results
