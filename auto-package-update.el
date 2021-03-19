@@ -346,10 +346,19 @@
 
   (run-hooks 'auto-package-update-after-hook))
 
+(defvar apu--update-timer nil
+  "When non-nil, timer created by ‘auto-package-update-at-time’.")
+
 ;;;###autoload
 (defun auto-package-update-at-time (time)
-  "Try to update every day at the specified TIME."
-  (run-at-time time 86400 'auto-package-update-maybe))
+  "Try to update every day at the specified TIME.
+When called multiple times, previously set timers are cancelled such that
+attempted update will happen at most once a day.  When called with TIME equal
+nil, no new timer is set up thus disabling any previously created timers."
+  (when apu--update-timer
+    (cancel-timer apu--update-timer))
+  (setq apu--update-timer
+        (when time (run-at-time time 86400 'auto-package-update-maybe))))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
