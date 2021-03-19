@@ -358,7 +358,9 @@ nil, no new timer is set up thus disabling any previously created timers."
   (when apu--update-timer
     (cancel-timer apu--update-timer))
   (setq apu--update-timer
-        (when time (run-at-time time 86400 'auto-package-update-maybe))))
+        (when time (run-at-time time (* 24 60 60)
+                                #'run-with-idle-timer 10 nil
+                                #'auto-package-update-maybe))))
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
