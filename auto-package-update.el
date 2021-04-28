@@ -164,6 +164,12 @@
   :type 'string
   :group 'auto-package-update)
 
+(defcustom auto-package-preview-buffer-name
+  "*package update preview*"
+  "Name of the buffer that shows a preview of the packages to be updated."
+  :type 'string
+  :group 'auto-package-update)
+
 (defcustom auto-package-update-delete-old-versions
   nil
   "If not nil, delete old versions directories."
@@ -173,6 +179,12 @@
 (defcustom auto-package-update-prompt-before-update
   nil
   "Prompt user (y/n) before running auto-package-update-maybe"
+  :type 'boolean
+  :group 'auto-package-update)
+
+(defcustom auto-package-update-show-preview
+  nil
+  "If not nil, show the list of packages to be updated when prompting before running auto-package-update-maybe"
   :type 'boolean
   :group 'auto-package-update)
 
@@ -243,9 +255,15 @@
    (apu--get-permission-to-update-p)))
 
 (defun apu--get-permission-to-update-p ()
-  "(Optionally) Prompt permission to perform update"
+  "(Optionally) Prompt permission to perform update and display preview"
   (if auto-package-update-prompt-before-update
-      (y-or-n-p "Auto-update packages now?")
+      (let* ((should-update nil) (up-to-date nil))
+        (when auto-package-update-show-preview
+          (setq up-to-date (apu--show-preview)))
+        (unless up-to-date
+          (setq should-update (y-or-n-p "Auto-update packages now?"))
+          (apu--hide-preview))
+        should-update)
     t))
 
 (defun apu--package-up-to-date-p (package)
@@ -298,18 +316,22 @@
       (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
 
-(defun apu--write-results-buffer (contents)
+(defun apu--write-buffer (contents buffer-name &optional hide-buffer)
   (let ((inhibit-read-only t))
-    (if (not auto-package-update-hide-results)
-        (pop-to-buffer auto-package-update-buffer-name)
-      (set-buffer
-       (get-buffer-create auto-package-update-buffer-name))
-      (bury-buffer
-       auto-package-update-buffer-name))
+    (if (not hide-buffer)
+        (pop-to-buffer buffer-name)
+      (set-buffer (get-buffer-create buffer-name))
+      (bury-buffer buffer-name))
     (erase-buffer)
     (insert contents)
     (read-only-mode 1)
     (auto-package-update-minor-mode 1)))
+
+(defun apu--write-results-buffer (contents)
+  (apu--write-buffer contents auto-package-update-buffer-name auto-package-update-hide-results))
+
+(defun apu--write-preview-buffer (contents)
+  (apu--write-buffer contents auto-package-preview-buffer-name))
 
 (define-minor-mode auto-package-update-minor-mode
   "Minor mode for displaying package update results."
@@ -328,13 +350,29 @@
         filtered-package-list)
     package-list))
 
+(defun apu--show-preview ()
+  (package-refresh-contents)
+  (let* ((package-list (apu--filter-quelpa-packages (apu--packages-to-install)))
+         (up-to-date (= (length package-list) 0))
+         (installation-preview (if up-to-date "All packages up to date" (mapconcat #'symbol-name package-list "\n"))))
+    (apu--write-preview-buffer (concat "[PACKAGES TO UPDATE]:\n" installation-preview))
+    up-to-date))
+
+(defun apu--hide-preview ()
+  (when (get-buffer auto-package-preview-buffer-name)
+    (set-buffer auto-package-preview-buffer-name)
+    (kill-buffer-and-window)))
+
 ;;;###autoload
 (defun auto-package-update-now ()
   "Update installed Emacs packages."
   (interactive)
   (run-hooks 'auto-package-update-before-hook)
 
-  (package-refresh-contents)
+  ;; If not already done for preview, fetch new package descriptions
+  (when (not (and auto-package-update-prompt-before-update
+                  auto-package-update-show-preview))
+    (package-refresh-contents))
 
   (let* ((package-list (apu--filter-quelpa-packages (apu--packages-to-install)))
          (installation-report (apu--safe-install-packages package-list)))
