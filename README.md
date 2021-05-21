@@ -91,6 +91,15 @@ after auto package update is complete:
 (setq auto-package-update-hide-results t)
 ```
 
+By default all activated packages are eligible for automatic updates.  However, packages
+can be excluded from this automated process.  Packages added to the exclusion list will
+not be considered for automatic updates.  These packages can still be manually updated
+as desired.
+
+``` elisp
+(setq auto-package-update-excluded-packages '(magit ivy))
+```
+
 ### Hooks
 
 

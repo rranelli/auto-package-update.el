@@ -183,6 +183,12 @@
   :type 'boolean
   :group 'auto-package-update)
 
+(defcustom auto-package-update-excluded-packages
+  nil
+  "List of packages to exclude from automatic package update."
+  :type '(repeat symbol)
+  :group 'auto-package-update)
+
 (defvar auto-package-update-last-update-day-path
   (expand-file-name auto-package-update-last-update-day-filename user-emacs-directory)
   "Path to the file that will hold the day in which the last update was run.")
@@ -262,7 +268,9 @@
   (not (apu--package-up-to-date-p package)))
 
 (defun apu--packages-to-install ()
-  (delete-dups (-filter 'apu--package-out-of-date-p package-activated-list)))
+  (delete-dups (-filter 'apu--package-out-of-date-p
+                        (-difference package-activated-list
+                                     auto-package-update-excluded-packages))))
 
 (defun apu--add-to-old-versions-dirs-list (package)
   "Add package old version dir to apu--old-versions-dirs-list"
