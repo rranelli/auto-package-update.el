@@ -75,6 +75,14 @@ Use this setting to show a manual prompt before automatic updates:
 (setq auto-package-update-prompt-before-update t)
 ```
 
+In addition to this you can use the following setting to get a preview
+together with the prompt, with a list of all packages that are going
+to be updated:
+
+```elisp
+(setq auto-package-update-show-preview t)
+```
+
 To delete residual old version directory when updating, set to
 true variable `auto-package-update-delete-old-versions`. The
 default value is `nil`. If you want to enable deleting:
