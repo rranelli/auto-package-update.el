@@ -1,4 +1,4 @@
-;;; auto-package-update.el --- Automatically update Emacs packages.
+;;; auto-package-update.el --- Automatically update Emacs packages.  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014 Renan Ranelli <renanranelli at google mail>
 
@@ -133,6 +133,7 @@
 ;;; Code:
 (require 'dash)
 
+(require 'cl-lib)
 (require 'package)
 (unless package--initialized
   (package-initialize))
@@ -305,7 +306,7 @@ prompting before running auto-package-update-maybe"
   (setq apu--old-versions-dirs-list ()))
 
 (defun apu--safe-package-install (package)
-  (condition-case ex
+  (condition-case nil
       (progn
         (when auto-package-update-delete-old-versions
           (apu--add-to-old-versions-dirs-list package))
@@ -313,15 +314,15 @@ prompting before running auto-package-update-maybe"
                (transaction (package-compute-transaction (list pkg-desc)
                                                          (package-desc-reqs pkg-desc))))
           (package-download-transaction transaction))
-        (add-to-list 'apu--package-installation-results
-                     (format "%s up to date." (symbol-name package))))
-    ('error (add-to-list 'apu--package-installation-results
-                         (format "Error installing %s" (symbol-name package))))))
+        (format "%s up to date." (symbol-name package)))
+    (error
+     (format "Error installing %s" (symbol-name package)))))
 
 (defun apu--safe-install-packages (packages)
-  (let (apu--package-installation-results)
+  (let ((apu--package-installation-results nil))
     (dolist (package-to-update packages)
-      (apu--safe-package-install package-to-update))
+      (cl-pushnew (apu--safe-package-install package-to-update)
+                  apu--package-installation-results))
     (when auto-package-update-delete-old-versions
       (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
