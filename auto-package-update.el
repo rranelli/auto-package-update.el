@@ -184,7 +184,8 @@
 
 (defcustom auto-package-update-show-preview
   nil
-  "If not nil, show the list of packages to be updated when prompting before running auto-package-update-maybe"
+  "If not nil, show the list of packages to be updated when
+prompting before running auto-package-update-maybe"
   :type 'boolean
   :group 'auto-package-update)
 
@@ -338,9 +339,13 @@
   :group 'auto-package-update
   :keymap '(("q" . quit-window)))
 
+;; Silence byte compile warnings.
+(defvar quelpa-cache)
+(declare-function quelpa-read-cache "quelpa" ())
+
 (defun apu--filter-quelpa-packages (package-list)
   "Return PACKAGE-LIST without quelpa packages."
-  (if (fboundp 'quelpa)
+  (if (require 'quelpa nil t)
       (let ((filtered-package-list package-list))
         (quelpa-read-cache)
         (dolist (package quelpa-cache)
@@ -391,8 +396,9 @@
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
-  "Update installed Emacs packages if at least \
-`auto-package-update-interval' days have passed since the last update."
+  "Update installed Emacs packages if at least
+`auto-package-update-interval' days have passed since the last
+update."
   (when (apu--should-update-packages-p)
     (auto-package-update-now)))
 
