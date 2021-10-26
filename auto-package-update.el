@@ -71,6 +71,15 @@
 ;;
 ;; You can also use the function `auto-package-update-now' to update your
 ;; packages immediatelly at any given time.
+;;
+;; Or use `auto-package-update-now-async' without blocking Emacs. Since we
+;; update packages after
+;;
+;; ```elisp
+;; (package-refresh-contents :async)
+;; ```
+;;
+;; we won't get all packages updated.
 
 ;;; Customization:
 ;;
@@ -369,7 +378,7 @@ prompting before running auto-package-update-maybe"
     (kill-buffer-and-window)))
 
 ;;;###autoload
-(defun auto-package-update-now ()
+(defun auto-package-update-now (&optional async)
   "Update installed Emacs packages."
   (interactive)
   (run-hooks 'auto-package-update-before-hook)
@@ -377,7 +386,7 @@ prompting before running auto-package-update-maybe"
   ;; If not already done for preview, fetch new package descriptions
   (when (not (and auto-package-update-prompt-before-update
                   auto-package-update-show-preview))
-    (package-refresh-contents))
+    (package-refresh-contents async))
 
   (let* ((package-list (apu--filter-quelpa-packages (apu--packages-to-install)))
          (installation-report (apu--safe-install-packages package-list)))
@@ -388,6 +397,30 @@ prompting before running auto-package-update-maybe"
                 "\n")))
 
   (run-hooks 'auto-package-update-after-hook))
+
+(defvar apu--update-thread nil
+  "The update thread.")
+
+;;;###autoload
+(defun auto-package-update-now-async (&optional force)
+  "Update installed Emacs packages with an async manner.
+If FORCE is non-nil, kill the update thread anyway."
+  (interactive "P")
+  ;; Kill the updating thread if requested.
+  (when force
+    (when (and apu--update-thread
+               (thread-live-p apu--update-thread))
+      (thread-signal apu--update-thread nil nil))
+    (setq apu--update-thread nil))
+  ;; Prompt user that if the update thread is still running.
+  (when (and apu--update-thread
+             (thread-live-p apu--update-thread))
+    (error "auto-package-update thread is still running."))
+  ;; Start a thread for updating.
+  (setq apu--update-thread (make-thread
+                            (lambda ()
+                              (auto-package-update-now :async))
+                            "auto-package-update-now-async")))
 
 ;;;###autoload
 (defun auto-package-update-at-time (time)
