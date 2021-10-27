@@ -79,7 +79,14 @@
 ;; (package-refresh-contents :async)
 ;; ```
 ;;
-;; we won't get all packages updated.
+;; we won't get all packages updated. The best practice is
+;;
+;; ```elisp
+;; M-x package-refresh-contents
+;; ```
+;;
+;; first, then use `auto-package-update-now-async'. Note, it's not 100% async,
+;; byte compiling packages can still block Emacs.
 
 ;;; Customization:
 ;;
