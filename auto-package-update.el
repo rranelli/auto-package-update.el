@@ -1,4 +1,4 @@
-;;; auto-package-update.el --- Automatically update Emacs packages.
+;;; auto-package-update.el --- Automatically update Emacs packages.  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2014 Renan Ranelli <renanranelli at google mail>
 
@@ -71,6 +71,22 @@
 ;;
 ;; You can also use the function `auto-package-update-now' to update your
 ;; packages immediatelly at any given time.
+;;
+;; Or use `auto-package-update-now-async' without blocking Emacs. Since we
+;; update packages after
+;;
+;; ```elisp
+;; (package-refresh-contents :async)
+;; ```
+;;
+;; we won't get all packages updated. The best practice is
+;;
+;; ```elisp
+;; M-x package-refresh-contents
+;; ```
+;;
+;; first, then use `auto-package-update-now-async'. Note, it's not 100% async,
+;; byte compiling packages can still block Emacs.
 
 ;;; Customization:
 ;;
@@ -124,6 +140,7 @@
 ;;; Code:
 (require 'dash)
 
+(require 'cl-lib)
 (require 'package)
 (unless package--initialized
   (package-initialize))
@@ -184,7 +201,8 @@
 
 (defcustom auto-package-update-show-preview
   nil
-  "If not nil, show the list of packages to be updated when prompting before running auto-package-update-maybe"
+  "If not nil, show the list of packages to be updated when
+prompting before running auto-package-update-maybe"
   :type 'boolean
   :group 'auto-package-update)
 
@@ -295,7 +313,7 @@
   (setq apu--old-versions-dirs-list ()))
 
 (defun apu--safe-package-install (package)
-  (condition-case ex
+  (condition-case nil
       (progn
         (when auto-package-update-delete-old-versions
           (apu--add-to-old-versions-dirs-list package))
@@ -303,15 +321,15 @@
                (transaction (package-compute-transaction (list pkg-desc)
                                                          (package-desc-reqs pkg-desc))))
           (package-download-transaction transaction))
-        (add-to-list 'apu--package-installation-results
-                     (format "%s up to date." (symbol-name package))))
-    ('error (add-to-list 'apu--package-installation-results
-                         (format "Error installing %s" (symbol-name package))))))
+        (format "%s up to date." (symbol-name package)))
+    (error
+     (format "Error installing %s" (symbol-name package)))))
 
 (defun apu--safe-install-packages (packages)
-  (let (apu--package-installation-results)
+  (let ((apu--package-installation-results nil))
     (dolist (package-to-update packages)
-      (apu--safe-package-install package-to-update))
+      (cl-pushnew (apu--safe-package-install package-to-update)
+                  apu--package-installation-results))
     (when auto-package-update-delete-old-versions
       (apu--delete-old-versions-dirs-list))
     apu--package-installation-results))
@@ -338,9 +356,13 @@
   :group 'auto-package-update
   :keymap '(("q" . quit-window)))
 
+;; Silence byte compile warnings.
+(defvar quelpa-cache)
+(declare-function quelpa-read-cache "quelpa" ())
+
 (defun apu--filter-quelpa-packages (package-list)
   "Return PACKAGE-LIST without quelpa packages."
-  (if (fboundp 'quelpa)
+  (if (require 'quelpa nil t)
       (let ((filtered-package-list package-list))
         (quelpa-read-cache)
         (dolist (package quelpa-cache)
@@ -364,7 +386,7 @@
     (kill-buffer-and-window)))
 
 ;;;###autoload
-(defun auto-package-update-now ()
+(defun auto-package-update-now (&optional async)
   "Update installed Emacs packages."
   (interactive)
   (run-hooks 'auto-package-update-before-hook)
@@ -372,7 +394,7 @@
   ;; If not already done for preview, fetch new package descriptions
   (when (not (and auto-package-update-prompt-before-update
                   auto-package-update-show-preview))
-    (package-refresh-contents))
+    (package-refresh-contents async))
 
   (let* ((package-list (apu--filter-quelpa-packages (apu--packages-to-install)))
          (installation-report (apu--safe-install-packages package-list)))
@@ -384,6 +406,30 @@
 
   (run-hooks 'auto-package-update-after-hook))
 
+(defvar apu--update-thread nil
+  "The update thread.")
+
+;;;###autoload
+(defun auto-package-update-now-async (&optional force)
+  "Update installed Emacs packages with an async manner.
+If FORCE is non-nil, kill the update thread anyway."
+  (interactive "P")
+  ;; Kill the updating thread if requested.
+  (when force
+    (when (and apu--update-thread
+               (thread-live-p apu--update-thread))
+      (thread-signal apu--update-thread nil nil))
+    (setq apu--update-thread nil))
+  ;; Prompt user that if the update thread is still running.
+  (when (and apu--update-thread
+             (thread-live-p apu--update-thread))
+    (error "auto-package-update thread is still running."))
+  ;; Start a thread for updating.
+  (setq apu--update-thread (make-thread
+                            (lambda ()
+                              (auto-package-update-now :async))
+                            "auto-package-update-now-async")))
+
 ;;;###autoload
 (defun auto-package-update-at-time (time)
   "Try to update every day at the specified TIME."
@@ -391,8 +437,9 @@
 
 ;;;###autoload
 (defun auto-package-update-maybe ()
-  "Update installed Emacs packages if at least \
-`auto-package-update-interval' days have passed since the last update."
+  "Update installed Emacs packages if at least
+`auto-package-update-interval' days have passed since the last
+update."
   (when (apu--should-update-packages-p)
     (auto-package-update-now)))
 
