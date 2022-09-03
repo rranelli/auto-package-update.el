@@ -439,17 +439,18 @@ If FORCE is non-nil, kill the update thread anyway."
                             "auto-package-update-now-async")))
 
 ;;;###autoload
-(defun auto-package-update-at-time (time)
+(defun auto-package-update-at-time (time &optional async)
   "Try to update every day at the specified TIME."
-  (run-at-time time 86400 'auto-package-update-maybe))
+  (run-at-time time 86400 (lambda ()
+                            (auto-package-update-maybe async))))
 
 ;;;###autoload
-(defun auto-package-update-maybe ()
+(defun auto-package-update-maybe (&optional async)
   "Update installed Emacs packages if at least
 `auto-package-update-interval' days have passed since the last
 update."
   (when (apu--should-update-packages-p)
-    (auto-package-update-now)))
+    (auto-package-update-now async)))
 
 (provide 'auto-package-update)
 ;;; auto-package-update.el ends here
