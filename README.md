@@ -1,3 +1,4 @@
+<a href="http://github.com/rranelli/auto-package-update.el"><img src="https://www.gnu.org/software/emacs/images/emacs.png" alt="Emacs Logo" width="80" height="80" align="right"></a>
 ## auto-package-update.el
 *Automatically update Emacs packages.*
 
@@ -56,6 +57,22 @@ will check for pending updates every three o'clock a.m..
 You can also use the function `auto-package-update-now` to update your
 packages immediatelly at any given time.
 
+Or use `auto-package-update-now-async` without blocking Emacs. Since we
+update packages after
+
+```elisp
+(package-refresh-contents :async)
+```
+
+we won't get all packages updated. The best practice is
+
+```elisp
+M-x package-refresh-contents
+```
+
+first, then use `auto-package-update-now-async`. Note, it's not 100% async,
+byte compiling packages can still block Emacs.
+
 ### Customization
 
 
@@ -75,37 +92,12 @@ Use this setting to show a manual prompt before automatic updates:
 (setq auto-package-update-prompt-before-update t)
 ```
 
-In addition to this you can use the following setting to get a preview
-together with the prompt, with a list of all packages that are going
-to be updated:
-
-```elisp
-(setq auto-package-update-show-preview t)
-```
-
 To delete residual old version directory when updating, set to
 true variable `auto-package-update-delete-old-versions`. The
 default value is `nil`. If you want to enable deleting:
 
 ```elisp
 (setq auto-package-update-delete-old-versions t)
-```
-
-By default the results buffer will be shown after auto package update is complete.
-Set to true for variable `auto-package-update-hide-results` to hide the results buffer
-after auto package update is complete:
-
-```elisp
-(setq auto-package-update-hide-results t)
-```
-
-By default all activated packages are eligible for automatic updates.  However, packages
-can be excluded from this automated process.  Packages added to the exclusion list will
-not be considered for automatic updates.  These packages can still be manually updated
-as desired.
-
-``` elisp
-(setq auto-package-update-excluded-packages '(magit ivy))
 ```
 
 ### Hooks
@@ -133,12 +125,66 @@ For example:
 1.1 - Support GNU Emacs 24.3. <br/>
 1.0 - First release. <br/>
 
-### Function Documentation
 
 
-#### `(auto-package-update-now)`
+### Customization Documentation
+
+#### `auto-package-update-interval`
+
+Interval in DAYS for automatic package update.
+
+#### `auto-package-update-before-hook`
+
+List of functions to be called before running an automatic package update.
+
+#### `auto-package-update-after-hook`
+
+List of functions to be called after running an automatic package update.
+
+#### `auto-package-update-last-update-day-filename`
+
+Name of the file in which the last update day is going to be stored.
+
+#### `auto-package-update-buffer-name`
+
+Name of the buffer that shows updated packages and error after execution.
+
+#### `auto-package-preview-buffer-name`
+
+Name of the buffer that shows a preview of the packages to be updated.
+
+#### `auto-package-update-delete-old-versions`
+
+If not nil, delete old versions directories.
+
+#### `auto-package-update-prompt-before-update`
+
+Prompt user (y/n) before running auto-package-update-maybe
+
+#### `auto-package-update-show-preview`
+
+If not nil, show the list of packages to be updated when
+prompting before running auto-package-update-maybe
+
+#### `auto-package-update-hide-results`
+
+If not nil, the result of auto package update in buffer
+`auto-package-update-buffer-name` will not be shown.
+
+#### `auto-package-update-excluded-packages`
+
+List of packages to exclude from automatic package update.
+
+### Function and Macro Documentation
+
+#### `(auto-package-update-now &optional ASYNC)`
 
 Update installed Emacs packages.
+
+#### `(auto-package-update-now-async &optional FORCE)`
+
+Update installed Emacs packages with an async manner.
+If FORCE is non-nil, kill the update thread anyway.
 
 #### `(auto-package-update-at-time TIME)`
 
@@ -146,7 +192,9 @@ Try to update every day at the specified TIME.
 
 #### `(auto-package-update-maybe)`
 
-Update installed Emacs packages if at least `auto-package-update-interval` days have passed since the last update.
+Update installed Emacs packages if at least
+`auto-package-update-interval` days have passed since the last
+update.
 
 -----
 <div style="padding-top:15px;color: #d0d0d0;">
