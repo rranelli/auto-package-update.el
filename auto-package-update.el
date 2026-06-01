@@ -70,7 +70,7 @@
 ;; will check for pending updates every three o'clock a.m..
 ;;
 ;; You can also use the function `auto-package-update-now' to update your
-;; packages immediatelly at any given time.
+;; packages immediately at any given time.
 ;;
 ;; Or use `auto-package-update-now-async' without blocking Emacs. Since we
 ;; update packages after
